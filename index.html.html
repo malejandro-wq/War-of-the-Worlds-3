@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>La Guerra de los Mundos - Quiz</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+
+background:#4b3621;
+font-family:Georgia, serif;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+height:100vh;
+
+background-image:url("assets/fondo.jpg");
+background-size:cover;
+background-position:center;
+
+}
+
+.libro{
+
+width:800px;
+
+background:#f4ecd8;
+
+padding:40px;
+
+border-radius:12px;
+
+border:8px solid #7b5b39;
+
+box-shadow:0px 0px 25px black;
+
+}
+
+h1{
+
+text-align:center;
+
+color:#5d3c16;
+
+margin-bottom:30px;
+
+font-size:42px;
+
+}
+
+#pregunta{
+
+font-size:26px;
+
+margin-bottom:25px;
+
+color:#4b3621;
+
+}
+
+button{
+
+display:block;
+
+width:100%;
+
+padding:16px;
+
+margin:12px 0;
+
+font-size:18px;
+
+background:#8b6a43;
+
+color:white;
+
+border:none;
+
+border-radius:8px;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+button:hover{
+
+background:#5d3c16;
+
+transform:scale(1.02);
+
+}
+
+button:disabled{
+
+cursor:not-allowed;
+
+opacity:.9;
+
+}
+
+.correcta{
+
+background:#2ecc71 !important;
+
+color:white;
+
+}
+
+.incorrecta{
+
+background:#e74c3c !important;
+
+color:white;
+
+}
+
+#resultado{
+
+text-align:center;
+
+font-size:30px;
+
+margin-top:20px;
+
+}
+
+#puntaje{
+
+margin-top:20px;
+
+text-align:center;
+
+font-size:24px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<audio id="correcto">
+
+<source src="assets/Sonido de opcion correcta.m4a" type="audio/mp4">
+
+</audio>
+
+<audio id="incorrecto">
+
+<source src="assets/Sonido de opcion incorrecta.m4a" type="audio/mp4">
+
+</audio>
+
+<div class="libro">
+
+<h1>La Guerra de los Mundos</h1>
+
+<div id="quiz">
+
+<div id="pregunta"></div>
+
+<div id="respuestas"></div>
+
+</div>
+
+<div id="resultado"></div>
+
+<div id="puntaje"></div>
+
+<script>
+
+const preguntas = [
+
+{
+pregunta:"¿Quién escribió La Guerra de los Mundos?",
+respuestas:[
+"Julio Verne",
+"H. G. Wells",
+"Arthur Conan Doyle",
+"Isaac Asimov"
+],
+correcta:1
+},
+
+{
+pregunta:"¿En qué año fue publicada la novela?",
+respuestas:[
+"1898",
+"1905",
+"1880",
+"1910"
+],
+correcta:0
+},
+
+{
+pregunta:"¿De qué planeta provienen los invasores?",
+respuestas:[
+"Venus",
+"Marte",
+"Júpiter",
+"Saturno"
+],
+correcta:1
+},
+
+{
+pregunta:"¿Cómo se llaman las enormes máquinas utilizadas por los marcianos?",
+respuestas:[
+"Tanques",
+"Trípodes",
+"Robots",
+"Naves"
+],
+correcta:1
+},
+
+{
+pregunta:"¿Qué director dirigió la película de 2005?",
+respuestas:[
+"James Cameron",
+"Steven Spielberg",
+"Christopher Nolan",
+"Ridley Scott"
+],
+correcta:1
+},
+
+{
+pregunta:"¿Quién protagoniza la película de 2005?",
+respuestas:[
+"Tom Hanks",
+"Tom Cruise",
+"Brad Pitt",
+"Matt Damon"
+],
+correcta:1
+},
+
+{
+pregunta:"¿Qué destruye finalmente a los marcianos?",
+respuestas:[
+"El ejército",
+"Una bomba nuclear",
+"Microorganismos terrestres",
+"El frío"
+],
+correcta:2
+},
+
+{
+pregunta:"¿A qué género pertenece la novela?",
+respuestas:[
+"Romance",
+"Ciencia ficción",
+"Terror",
+"Drama"
+],
+correcta:1
+},
+
+{
+pregunta:"¿Quién realizó la famosa adaptación radial de 1938?",
+respuestas:[
+"Alfred Hitchcock",
+"Orson Welles",
+"Stanley Kubrick",
+"George Lucas"
+],
+correcta:1
+},
+
+{
+pregunta:"¿Cuál es el mensaje principal de la obra?",
+respuestas:[
+"La riqueza mundial",
+"La vulnerabilidad de la humanidad frente a una fuerza superior",
+"La conquista espacial",
+"La guerra medieval"
+],
+correcta:1
+}
+
+];
+
+let actual = 0;
+let puntos = 0;
+
+const pregunta = document.getElementById("pregunta");
+const respuestas = document.getElementById("respuestas");
+
+function cargar(){
+
+pregunta.innerHTML =
+(actual + 1) + ". " + preguntas[actual].pregunta;
+
+respuestas.innerHTML = "";
+
+preguntas[actual].respuestas.forEach((texto,i)=>{
+
+let boton = document.createElement("button");
+
+boton.innerHTML = texto;
+
+boton.onclick = ()=> responder(i);
+
+respuestas.appendChild(boton);
+
+});
+
+}
+
+function responder(indice){
+
+const botones = document.querySelectorAll("#respuestas button");
+
+botones.forEach(b=>{
+
+b.disabled=true;
+
+});
+
+if(indice===preguntas[actual].correcta){
+
+puntos++;
+
+botones[indice].classList.add("correcta");
+
+document.getElementById("correcto").currentTime=0;
+
+document.getElementById("correcto").play();
+
+}else{
+
+botones[indice].classList.add("incorrecta");
+
+botones[preguntas[actual].correcta].classList.add("correcta");
+
+document.getElementById("incorrecto").currentTime=0;
+
+document.getElementById("incorrecto").play();
+
+}
+
+setTimeout(()=>{
+
+actual++;
+
+if(actual<preguntas.length){
+
+cargar();
+
+}else{
+
+document.getElementById("quiz").style.display="none";
+
+document.getElementById("resultado").innerHTML="<h2>¡Juego terminado!</h2>";
+
+let mensaje="";
+
+if(puntos==10){
+
+mensaje="🏆 ¡Excelente! Eres un experto en La Guerra de los Mundos.";
+
+}else if(puntos>=8){
+
+mensaje="🥇 Muy buen trabajo.";
+
+}else if(puntos>=6){
+
+mensaje="🥈 Buen intento.";
+
+}else{
+
+mensaje="🥉 Sigue practicando.";
+
+}
+
+document.getElementById("puntaje").innerHTML=
+
+`
+<p>Obtuviste <b>${puntos}</b> de <b>${preguntas.length}</b> respuestas correctas.</p>
+
+<p>${mensaje}</p>
+
+<br>
+
+<button onclick="location.reload()">
+
+Volver a jugar
+
+</button>
+
+`;
+
+}
+
+},1000);
+
+}
+
+cargar();
+
+</script>
+
+</div>
+
+</body>
+
+</html>
